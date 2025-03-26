@@ -1,0 +1,96 @@
+[
+    {
+        "key": "common",
+        "type": "nested",
+        "dataBefore": null,
+        "dataAfter": null,
+        "children": [
+            {
+                "key": "setting1",
+                "type": "unchanged",
+                "dataBefore": "Value 1",
+                "dataAfter": "Value 1",
+                "children": []
+            },
+            {
+                "key": "setting2",
+                "type": "removed",
+                "dataBefore": "200",
+                "dataAfter": null,
+                "children": []
+            },
+            {
+                "key": "setting3",
+                "type": "unchanged",
+                "dataBefore": true,
+                "dataAfter": true,
+                "children": []
+            },
+            {
+                "key": "setting6",
+                "type": "removed",
+                "dataBefore": {
+                    "key": "value"
+                },
+                "dataAfter": null,
+                "children": []
+            },
+            {
+                "key": "setting4",
+                "type": "added",
+                "dataBefore": null,
+                "dataAfter": "blah blah",
+                "children": []
+            },
+            {
+                "key": "setting5",
+                "type": "added",
+                "dataBefore": null,
+                "dataAfter": {
+                    "key5": "value5"
+                },
+                "children": []
+            }
+        ]
+    },
+    {
+        "key": "group1",
+        "type": "nested",
+        "dataBefore": null,
+        "dataAfter": null,
+        "children": [
+            {
+                "key": "baz",
+                "type": "changed",
+                "dataBefore": "bas",
+                "dataAfter": "bars",
+                "children": []
+            },
+            {
+                "key": "foo",
+                "type": "unchanged",
+                "dataBefore": "bar",
+                "dataAfter": "bar",
+                "children": []
+            }
+        ]
+    },
+    {
+        "key": "group2",
+        "type": "removed",
+        "dataBefore": {
+            "abc": "12345"
+        },
+        "dataAfter": null,
+        "children": []
+    },
+    {
+        "key": "group3",
+        "type": "added",
+        "dataBefore": null,
+        "dataAfter": {
+            "fee": "100500"
+        },
+        "children": []
+    }
+]

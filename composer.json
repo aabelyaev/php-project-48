@@ -5,7 +5,13 @@
             "Hexlet\\Code\\": "src/"
         },
         "files": [
-            "src/Differ.php"
+            "src/Differ.php",
+            "src/Parsers.php",
+            "src/formatters/RenderPretty.php",
+            "src/formatters/RenderPlain.php",
+            "src/formatters/RenderJson.php",
+            "src/formatters/Formatters.php",
+            "src/Builder.php"
         ]
     },
     "authors": [{
@@ -15,7 +21,22 @@
     "bin": [
         "bin/gendiff"
     ],
+    "scripts": {
+        "phpcs": "phpcs",
+        "psysh": "psysh",
+        "phpcbf": "phpcbf",
+        "phpunit": "phpunit",
+        "test": "phpunit tests"
+    },
     "require": {
-        "docopt/docopt": "^1.0"
+        "docopt/docopt": "^1.0",
+        "ext-json": "*",
+        "funct/funct": "^1.5",
+        "symfony/yaml": "^4.4"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*",
+        "phpunit/phpunit": "^8.3",
+        "symfony/var-dumper": "^4.4"
     }
 }
