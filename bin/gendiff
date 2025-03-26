@@ -5,7 +5,6 @@ use function Gendiff\Differ\genDiff;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
-
 if (file_exists($autoloadPath1)) {
     require_once $autoloadPath1;
 } else {
@@ -28,12 +27,8 @@ Options:
 
 DOCOPT;
 
-$args = Docopt::handle(DOC, ['version' => '1.0.0rc2']);
+$args = \Docopt::handle(DOC, ['version' => '1.0.0rc2']);
 
-$pathToFile1 = $args['<firstFile>'];
-$pathToFile2 = $args['<secondFile>'];
-$formatName = $args["--format"];
-
-$diff = genDiff($pathToFile1, $pathToFile2, $formatName);
+$diff = genDiff($args['<firstFile>'], $args['<secondFile>'], $args['--format']);
 
 print_r($diff . PHP_EOL);
