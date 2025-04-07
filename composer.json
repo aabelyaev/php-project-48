@@ -36,7 +36,7 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",
-        "phpunit/phpunit": "^8.3",
+        "phpunit/phpunit": "^8.3.16",
         "symfony/var-dumper": "^4.4"
     }
 }

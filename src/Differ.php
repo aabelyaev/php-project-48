@@ -27,7 +27,7 @@ function getContent($pathToFile)
     $realPath = realpath($pathToFile);
 
     if (!$realPath) {
-        throw new \Exception("wrong file path {$pathToFile}");
+        throw new \Exception("wrong file path {$pathToFile}: $realPath");
     }
 
     return file_get_contents($realPath);
