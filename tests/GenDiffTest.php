@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\Tests;
+namespace Hexlet\Project\Tests\Differ;
 
 use PHPUnit\Framework\TestCase;
 
