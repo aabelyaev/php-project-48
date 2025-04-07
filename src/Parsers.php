@@ -13,6 +13,6 @@ function parse($extension, $content)
         case 'yaml':
             return Yaml::parse($content);
         default:
-            throw new \Exception("unknown file extension {$extension}");
+            throw new \Exception("unknown extension {$extension}");
     }
 }

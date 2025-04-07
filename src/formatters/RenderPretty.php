@@ -19,30 +19,38 @@ function buildPretty($tree, $level = 0)
                 $newChildren = buildPretty($node['children'], $level + 1);
                 return INDENT . "{$node['key']}: " . $newChildren;
             case 'unchanged':
-                return $offset . INDENT . "{$node['key']}: " . stringify($node['dataAfter'], $offset, $level);
+                $valueStr = stringify($node['dataAfter']);
+                return $offset . INDENT . "{$node['key']}: {$valueStr}";
             case 'changed':
+                $beforeValueStr = stringify($node['dataBefore']);
+                $afterValueStr = stringify($node['dataAfter']);
                 return $offset
-                    . "  + {$node['key']}: "
-                    . stringify($node['dataAfter'], $offset, $level)
-                    . PHP_EOL
+                    . "  + {$node['key']}: {$afterValueStr}" . "\n"
                     . $offset
-                    . "  - {$node['key']}: "
-                    . stringify($node['dataBefore'], $offset, $level);
+                    . "  - {$node['key']}: {$beforeValueStr}";
             case 'removed':
+                $valueStr = stringify($node['dataBefore']);
                 return $offset
-                    . "  - {$node['key']}: "
-                    . stringify($node['dataBefore'], $offset, $level);
+                    . "  - {$node['key']}: {$valueStr}";
             case 'added':
+                $valueStr = stringify($node['dataAfter']);
                 return $offset
-                    . "  + {$node['key']}: "
-                    . stringify($node['dataAfter'], $offset, $level);
+                    . "  + {$node['key']}: {$valueStr}";
+            default:
+                return "Unknown node type: {$node['type']}";
         }
     }, $tree);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
+    $result = implode("\n", array_filter($nodesForPretty));
+    
+    if ($level == 0) {
+        return "{" . "\n" . $result . "\n" . "}";
+    } else {
+        return $offset . "{\n" . $result . "\n}";
+    }
 }
 
-function stringify($value, $parentOffset, $level = 0)
+function stringify($value, $parentOffset = '', $level = 0)
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
@@ -52,14 +60,20 @@ function stringify($value, $parentOffset, $level = 0)
         return $value;
     }
 
-    $parentOffset = $level ? $parentOffset : INDENT;
     $offset = str_repeat(INDENT, $level + 1);
-
+    
     $keys = array_keys($value);
 
     $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        return $parentOffset . $offset . "$key: " . $value[$key];
+        $keyStr = $parentOffset ? $parentOffset . "  " : '';
+        return "$keyStr$offset{$key}: {$value[$key]}";
     }, $keys);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
+    $result = implode("\n", $nestedItem);
+    
+    if ($level == 0 && !empty($parentOffset)) {
+        return "{" . "\n" . $result . "\n" . $parentOffset . "}";
+    } else {
+        return "{" . "\n" . $result . "\n" . $offset;
+    }
 }

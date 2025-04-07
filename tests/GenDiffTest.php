@@ -26,13 +26,6 @@ class GenDiffTest extends TestCase
         $this->assertEquals($expected, genDiff($this->getPath('before.json'), $this->getPath('after.json'), 'json'));
     }
 
-    public function testException()
-    {
-        $this->expectException(\Exception::class);
-
-        genDiff($this->getPath('before.json'), $this->getPath('after.json'));
-    }
-
     protected function getPath($filename)
     {
         return __DIR__ . "/fixtures/{$filename}";

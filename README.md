@@ -7,8 +7,6 @@
 * Composer
 
 ## asciinema
-##  2 step ##
- [step2](https://asciinema.org/a/cjmsp0uHjQV1ULqKLAcQ6gf7w)
 ##  3 step ##
  [step3](https://asciinema.org/a/S6UkUckAwnc8Ype5JCOHqMJey)
 ## 4 step ##

@@ -26,6 +26,8 @@ function buildPlain($tree, $parent = '')
                     "Property '{$parent}{$node['key']}' was added with value: '%s'",
                     stringify($node['dataAfter'])
                 );
+            default:
+                return "Unknown node type: {$node['type']}";
         }
     }, $tree);
 
