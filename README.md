@@ -5,3 +5,12 @@
 
 * PHP 8.3.16
 * Composer
+
+## asciinema
+
+2 step https://asciinema.org/a/cjmsp0uHjQV1ULqKLAcQ6gf7w
+3 step https://asciinema.org/a/S6UkUckAwnc8Ype5JCOHqMJey
+4 step https://asciinema.org/a/QK6N8WGUUqGNIU1uxtPS0ZnIn
+5 step https://asciinema.org/a/3aQB4k0032lFYFiobB4dk3Jb3
+6 step https://asciinema.org/a/77uxxbWlDzVcpiJOJr2Uk6Zf2
+
