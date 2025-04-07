@@ -1,6 +1,6 @@
 <?php
 
-namespace Hexlet\Project\Tests\Differ;
+namespace Gendiff\Tests;
 
 use PHPUnit\Framework\TestCase;
 
@@ -30,7 +30,7 @@ class GenDiffTest extends TestCase
     {
         $this->expectException(\Exception::class);
 
-        genDiff($this->getPath('bef.json'), $this->getPath('aft.json'));
+        genDiff($this->getPath('before.json'), $this->getPath('after.json'));
     }
 
     protected function getPath($filename)
