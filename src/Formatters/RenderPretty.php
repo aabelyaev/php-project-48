@@ -52,16 +52,16 @@ function stringify($value, $parentOffset = '', $level = 0)
     }
 
     if (!is_array($value)) {
-        return $value;
+        return (string)$value; // Ensures that the returned value is a string even if it's not an array
     }
 
     $offset = str_repeat(INDENT, $level + 1);
     
     $keys = array_keys($value);
-
+    
     $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        $keyStr = $parentOffset ? $parentOffset . "  " : '';
-        return "$keyStr$offset{$key}: {$value[$key]}";
+        $keyStr = $parentOffset ? "{$parentOffset}  " : '';
+        return "{$keyStr}{$offset}{$key}: {$value[$key]}";
     }, $keys);
 
     $result = implode("\n", $nestedItems);
@@ -69,6 +69,6 @@ function stringify($value, $parentOffset = '', $level = 0)
     if ($level == 0 && !empty($parentOffset)) {
         return "{\n{$result}\n{$parentOffset}}";
     } else {
-        return "{\n{$result}\n{$offset}}";
+        return "{\n{$result}\n{$offset}}"; // Modified to return the offset correctly
     }
 }
