@@ -2,46 +2,52 @@
 
 namespace Gendiff\Formatters\RenderPlain;
 
-function renderPlain(array $tree)
+function formatValue(mixed $value): string
 {
-    return buildPlain($tree);
-}
-
-function buildPlain($tree, $parent = '')
-{
-    $nodesForPlain = array_map(function ($node) use ($parent) {
-        switch ($node['type']) {
-            case 'nested':
-                return buildPlain($node['children'], "{$parent}{$node['key']}.");
-            default:
-                $str = "Property '%s'";
-                $action = '';
-                switch ($node['type']) {
-                    case 'changed':
-                        $action = " was changed. From '%s' to '%s'";
-                        break;
-                    case 'removed':
-                        $action = " was removed";
-                        break;
-                    case 'added':
-                        $str .= " was added with value: '%s'";
-                        break;
-                }
-                return sprintf($str . $action, "{$parent}{$node['key']}", stringify($node['dataBefore']), stringify($node['dataAfter']));
-        }
-    }, $tree);
-    return implode(PHP_EOL, array_filter($nodesForPlain, fn($item) => !empty($item)));
-}
-
-function stringify($value)
-{
-    if (is_bool($value)) {
-        return $value ? 'true' : 'false';
-    }
-
     if (is_array($value)) {
-        return 'complex value';
+        return "[complex value]";
     }
+    return match ($value) {
+        true => "true",
+        false => "false",
+        null => "null",
+        default => is_int($value) ? "$value" : "'{$value}'",
+    };
+}
 
-    return $value;
+function makeLine(string $property, int $mark, string $value = null, string $newValue = null): string
+{
+    if ($newValue !== null) {
+        return "Property '{$property}' was updated. From {$value} to {$newValue}";
+    } elseif ($mark === -1) {
+        return "Property '{$property}' was removed";
+    } elseif ($mark === 1) {
+        return "Property '{$property}' was added with value: {$value}";
+    } else {
+        return "Can't identify state of property '{$property}'";
+    }
+}
+
+function formatResult(array $diff, array $acc = [], string $path = ''): string
+{
+    $result = array_reduce($diff, function (array $acc, array $item) use ($path) {
+        $pathCurrent = $path === '' ? $item['key'] : "{$path}.{$item['key']}";
+        $value = $item['value'];
+
+        if (is_array($value) && array_is_list($value)) {
+            return [...$acc, formatResult($value, [], $pathCurrent)];
+        }
+
+        if ($item['mark'] === 0 || $item['isUpdatedValue'] === false) {
+            return $acc;
+        }
+
+        $valueFormated = formatValue($value);
+        $newValue = $item['isUpdatedValue'] === true ? formatValue($item['newValue']) : null;
+        $line = makeLine($pathCurrent, $item['mark'], $valueFormated, $newValue);
+
+        return [...$acc, $line];
+    }, $acc);
+
+    return implode(PHP_EOL, $result);
 }
