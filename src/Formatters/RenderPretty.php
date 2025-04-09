@@ -42,24 +42,21 @@ function buildPretty($tree, $level = 0)
     return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
 }
 
-function stringify($value, $parentOffset, $level = 0)
+function stringify($value, $parentOffset = '', $level = 0)
 {
     if (is_bool($value)) {
-        return $value ? 'true' : 'false';
+        return $value ? 'true' : 'false'; // Преобразование булевых значений в строки
     }
 
     if (!is_array($value)) {
-        return $value;
+        return $value; // Возвращение простого значения без изменений, если это не массив
     }
 
-    $parentOffset = $level ? $parentOffset : INDENT;
-    $offset = str_repeat(INDENT, $level + 1);
+    $offset = str_repeat(INDENT, $level + 1); // Вычисление отступа для вложенных элементов
 
-    $keys = array_keys($value);
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value, $level) {
+        return "{$parentOffset}{$offset}{$key}: " . stringify($value[$key], INDENT, $level + 1); // Рекурсивный вызов для вложенных массивов с указанием $level
+    }, array_keys($value));
 
-    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        return $parentOffset . $offset . "$key: " . $value[$key];
-    }, $keys);
-
-    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
+    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $parentOffset . "}"; // Формирование строки с отступом для вложенного элемента
 }
