@@ -9,7 +9,7 @@ function renderPretty(array $tree)
     return buildPretty($tree);
 }
 
-function buildPretty($tree, $level = 0):mixed
+function buildPretty($tree, $level = 0)
 {
     $offset = str_repeat(INDENT, $level);
 
@@ -17,22 +17,25 @@ function buildPretty($tree, $level = 0):mixed
         switch ($node['type']) {
             case 'nested':
                 $newChildren = buildPretty($node['children'], $level + 1);
-                return INDENT . "{$node['key']}: {$newChildren}";
+                return INDENT . "{$node['key']}: " . $newChildren;
             case 'unchanged':
-                $valueStr = stringify($node['dataAfter']); 
-                return "{$offset}" . INDENT . "{$node['key']}: {$valueStr}";
+                return $offset . INDENT . "{$node['key']}: " . stringify($node['dataAfter'], $offset, $level);
             case 'changed':
-                $beforeValueStr = stringify($node['dataBefore']);
-                $afterValueStr = stringify($node['dataAfter']);
-                return "{$offset}  + {$node['key']}: {$afterValueStr}\n{$offset}  - {$node['key']}: {$beforeValueStr}";
+                return $offset
+                    . "  + {$node['key']}: "
+                    . stringify($node['dataAfter'], $offset, $level)
+                    . PHP_EOL
+                    . $offset
+                    . "  - {$node['key']}: "
+                    . stringify($node['dataBefore'], $offset, $level);
             case 'removed':
-                $valueStr = stringify($node['dataBefore']);
-                return "{$offset}  - {$node['key']}: {$valueStr}";
+                return $offset
+                    . "  - {$node['key']}: "
+                    . stringify($node['dataBefore'], $offset, $level);
             case 'added':
-                $valueStr = stringify($node['dataAfter']);
-                return "{$offset}  + {$node['key']}: {$valueStr}";
-            default:
-            throw new \Exception("Unknown node type {$node['type']} at level {$level}");
+                return $offset
+                    . "  + {$node['key']}: "
+                    . stringify($node['dataAfter'], $offset, $level);
         }
     }, $tree);
 
