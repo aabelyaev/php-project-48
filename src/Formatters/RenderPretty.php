@@ -2,61 +2,59 @@
 
 namespace Gendiff\Formatters\RenderPretty;
 
-const INDENT = '    ';
+const INDENT_SYMBOL = ' ';
+const INDENT_COUNT = 4;
+const PROPERTY_DELETED = '-';
+const PROPERTY_ADDED = '+';
+const PROPERTY_NOT_CHANGED = ' ';
 
-function renderPretty(array $tree)
+function formatValue(mixed $value): string
 {
-    return buildPretty($tree);
+    return match ($value) {
+        true => 'true',
+        false => 'false',
+        null => 'null',
+        default => $value,
+    };
 }
 
-function buildPretty($tree, $level = 0)
+function getIndent(int $depth, int $offset): string
 {
-    $offset = str_repeat(INDENT, $level);
+    $count = INDENT_COUNT * $depth - $offset;
 
-    $nodesForPretty = array_map(function ($node) use ($offset, $level) {
-        switch ($node['type']) {
-            case 'nested':
-                $newChildren = buildPretty($node['children'], $level + 1);
-                return INDENT . "{$node['key']}: " . $newChildren;
-            case 'unchanged':
-                return $offset . INDENT . "{$node['key']}: " . stringify($node['dataAfter'], $offset, $level);
-            case 'changed':
-                return $offset
-                    . "  + {$node['key']}: "
-                    . stringify($node['dataAfter'], $offset, $level)
-                    . PHP_EOL
-                    . $offset
-                    . "  - {$node['key']}: "
-                    . stringify($node['dataBefore'], $offset, $level);
-            case 'removed':
-                return $offset
-                    . "  - {$node['key']}: "
-                    . stringify($node['dataBefore'], $offset, $level);
-            case 'added':
-                return $offset
-                    . "  + {$node['key']}: "
-                    . stringify($node['dataAfter'], $offset, $level);
+    return str_repeat(INDENT_SYMBOL, $count);
+}
+
+function formatResult(array $diff, int $depth = 1): string
+{
+    $lines = array_map(function ($item) use ($depth) {
+        $indent = getIndent($depth, INDENT_COUNT / 2);
+        $mark = match ($item['mark'] ?? null) {
+            -1 => PROPERTY_DELETED,
+            1 => PROPERTY_ADDED,
+            default => PROPERTY_NOT_CHANGED,
+        };
+
+        if (key_exists('value', $item) && key_exists('key', $item)) {
+            $value = $item['value'];
+            $key = $item['key'];
+        } else {
+            $value = $item;
+            $key = '';
         }
-    }, $tree);
-
-    return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
-}
-
-function stringify($value, $parentOffset = '', $level = 0)
-{
-    if (is_bool($value)) {
-        return $value ? 'true' : 'false'; // Преобразование булевых значений в строки
-    }
-
-    if (!is_array($value)) {
-        return $value; // Возвращение простого значения без изменений, если это не массив
-    }
-
-    $offset = str_repeat(INDENT, $level + 1); // Вычисление отступа для вложенных элементов
-
-    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value, $level) {
-        return "{$parentOffset}{$offset}{$key}: " . stringify($value[$key], INDENT, $level + 1); // Рекурсивный вызов для вложенных массивов с указанием $level
-    }, array_keys($value));
-
-    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $parentOffset . "}"; // Формирование строки с отступом для вложенного элемента
+        if (is_array($value)) {
+            if (!array_is_list($value)) {
+                $arrayValue = array_map(fn ($item) => ['value' => $value[$item], 'key' => $item], array_keys($value));
+            } else {
+                $arrayValue = $value;
+            }
+            $valuePrepared = formatResult($arrayValue, $depth + 1);
+        } else {
+            $valuePrepared = formatValue($value);
+        }
+        return "{$indent}{$mark} {$key}: {$valuePrepared}";
+    }, $diff);
+    $indentBrace = getIndent($depth - 1, 0);
+    $result = implode("\n", $lines);
+    return "{\n{$result}\n{$indentBrace}}";
 }
