@@ -1,5 +1,3 @@
-It appears you're looking to modify the data type of the node parameter in your buildPretty function to accept a more flexible type, specifically mixed. This would allow the function to handle different types of input more gracefully. Below, I've updated your code accordingly while ensuring it maintains its functionality and aligns with good coding practices.
-Here's the revised version of your PHP code with the changes reflecting mixed type for the node parameter:
 <?php
 
 namespace Gendiff\Formatters\RenderPretty;
@@ -11,14 +9,7 @@ function renderPretty(array $tree)
     return buildPretty($tree);
 }
 
-/**
- * Recursively builds a pretty formatted string representation of the tree.
- *
- * @param mixed $tree The tree structure made of nodes.
- * @param int $level The current nesting level.
- * @return string The formatted string representation of the tree.
- */
-function buildPretty($tree, int $level = 0): string
+function buildPretty($tree, $level = 0)
 {
     $offset = str_repeat(INDENT, $level);
 
@@ -41,7 +32,7 @@ function buildPretty($tree, int $level = 0): string
                 $valueStr = stringify($node['dataAfter']);
                 return "{$offset}  + {$node['key']}: {$valueStr}";
             default:
-                throw new \Exception("Unknown node type {$node['type']} at level {$level}");
+            throw new \Exception("Unknown node type {$node['type']} at level {$level}");
         }
     }, $tree);
 
@@ -54,21 +45,24 @@ function buildPretty($tree, int $level = 0): string
     return $result;
 }
 
-/**
- * Converts a value to its string representation.
- *
- * @param mixed $value The value to convert.
- * @return string The string representation of the value.
- */
-function stringify($value): string
+function stringify($value, $parentOffset, $level = 0)
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
     }
 
-    if (is_array($value)) {
-        return 'complex value';
+    if (!is_array($value)) {
+        return $value;
     }
 
-    return (string)$value;
+    $parentOffset = $level ? $parentOffset : INDENT;
+    $offset = str_repeat(INDENT, $level + 1);
+
+    $keys = array_keys($value);
+
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        return $parentOffset . $offset . "$key: " . $value[$key];
+    }, $keys);
+
+    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
 }
