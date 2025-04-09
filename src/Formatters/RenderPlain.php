@@ -26,8 +26,6 @@ function buildPlain($tree, $parent = '')
                     case 'added':
                         $str .= " was added with value: '%s'";
                         break;
-                    default:
-                        throw new \Exception("Unknown node {$node}");
                 }
                 return sprintf($str . $action, "{$parent}{$node['key']}", stringify($node['dataBefore']), stringify($node['dataAfter']));
         }
