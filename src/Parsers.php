@@ -4,15 +4,15 @@ namespace Gendiff\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function parse($extension, $content)
+function parse($data, $content)
 {
-    switch ($extension) {
+    switch ($data) {
         case 'json':
             return json_decode($content, true);
         case 'yml':
         case 'yaml':
             return Yaml::parse($content);
         default:
-            throw new \Exception("unknown extension {$extension}");
+            throw new \Exception("unknown data {$data}");
     }
 }

@@ -4,7 +4,7 @@ namespace Gendiff\Builder;
 
 function builderTree($dataBefore, $dataAfter)
 {
-    $unique_keys = array_values(
+    $uniqueKeys = array_values(
         array_unique(array_merge(array_keys($dataBefore), array_keys($dataAfter)))
     );
 
@@ -26,7 +26,7 @@ function builderTree($dataBefore, $dataAfter)
         }
 
         return buildNode($key, 'unchanged', $dataBefore[$key], $dataAfter[$key]);
-     }, $unique_keys);
+     }, $uniqueKeys);
 }
 
 function buildNode($key, $type, $dataBefore = null, $dataAfter = null, $children = [])

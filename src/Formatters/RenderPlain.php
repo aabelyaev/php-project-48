@@ -13,24 +13,25 @@ function buildPlain($tree, $parent = '')
         switch ($node['type']) {
             case 'nested':
                 return buildPlain($node['children'], "{$parent}{$node['key']}.");
-            case 'changed':
-                return sprintf(
-                    "Property '{$parent}{$node['key']}' was changed. From '%s' to '%s'",
-                    stringify($node['dataBefore']),
-                    stringify($node['dataAfter'])
-                );
-            case 'removed':
-                return sprintf("Property '{$parent}{$node['key']}' was removed");
-            case 'added':
-                return sprintf(
-                    "Property '{$parent}{$node['key']}' was added with value: '%s'",
-                    stringify($node['dataAfter'])
-                );
             default:
-                return "Unknown node type: {$node['type']}";
+                $str = "Property '%s' %s";
+                $action = '';
+                switch ($node['type']) {
+                    case 'changed':
+                        $action = " was changed. From '%s' to '%s'";
+                        break;
+                    case 'removed':
+                        $action = " was removed";
+                        break;
+                    case 'added':
+                        $str .= " was added with value: '%s'";
+                        break;
+                    default:
+                        throw new \Exception("Unknown node {$node}");
+                    }
+                return sprintf($str, "{$parent}{$node['key']}", $action, stringify($node['dataBefore']), stringify($node['dataAfter']));
         }
     }, $tree);
-
     return implode(PHP_EOL, array_filter($nodesForPlain, fn($item) => !empty($item)));
 }
 
