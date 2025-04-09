@@ -7,35 +7,40 @@ function renderPlain(array $tree)
     return buildPlain($tree);
 }
 
-function buildPlain($tree, $parent = '')
+function buildPlain(array $tree, string $parent = '')
 {
     $nodesForPlain = array_map(function ($node) use ($parent) {
         switch ($node['type']) {
             case 'nested':
                 return buildPlain($node['children'], "{$parent}{$node['key']}.");
             default:
-                $str = "Property '%s' %s";
-                $action = '';
-                switch ($node['type']) {
-                    case 'changed':
-                        $action = " was changed. From '%s' to '%s'";
-                        break;
-                    case 'removed':
-                        $action = " was removed";
-                        break;
-                    case 'added':
-                        $str .= " was added with value: '%s'";
-                        break;
-                    default:
-                        throw new \Exception("Unknown node {$node}");
-                    }
-                return sprintf($str, "{$parent}{$node['key']}", $action, stringify($node['dataBefore']), stringify($node['dataAfter']));
+                return formatNode($node, $parent);
         }
     }, $tree);
     return implode(PHP_EOL, array_filter($nodesForPlain, fn($item) => !empty($item)));
 }
 
-function stringify($value)
+function formatNode(array $node, string $parent): string
+{
+    $messageTemplate = "Property '%s' %s";
+    $action = '';
+    switch ($node['type']) {
+        case 'changed':
+            $action = sprintf("was changed. From '%s' to '%s'", stringify($node['dataBefore']), stringify($node['dataAfter']));
+            break;
+        case 'removed':
+            $action = "was removed";
+            break;
+        case 'added':
+            $action = sprintf("was added with value: '%s'", stringify($node['dataAfter']));
+            break;
+        default:
+            throw new \Exception("Unknown node type: {$node['type']}");
+    }
+    return sprintf($messageTemplate, "{$parent}{$node['key']}", $action);
+}
+
+function stringify($value): string
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
@@ -45,5 +50,5 @@ function stringify($value)
         return 'complex value';
     }
 
-    return $value;
+    return (string)$value;
 }
