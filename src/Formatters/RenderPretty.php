@@ -51,8 +51,8 @@ function stringify($value, $parentOffset = '', $level = 0)
 
     $offset = str_repeat(INDENT, $level + 1); // Вычисление отступа для вложенных элементов
 
-    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        return "{$parentOffset}{$offset}{$key}: " . stringify($value[$key], INDENT, $level + 1); // Рекурсивный вызов для вложенных массивов
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value, $level) {
+        return "{$parentOffset}{$offset}{$key}: " . stringify($value[$key], INDENT, $level + 1); // Рекурсивный вызов для вложенных массивов с указанием $level
     }, array_keys($value));
 
     return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $parentOffset . "}"; // Формирование строки с отступом для вложенного элемента
