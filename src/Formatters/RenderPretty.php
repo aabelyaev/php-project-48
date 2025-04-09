@@ -2,59 +2,73 @@
 
 namespace Gendiff\Formatters\RenderPretty;
 
-const INDENT_SYMBOL = ' ';
-const INDENT_COUNT = 4;
-const PROPERTY_DELETED = '-';
-const PROPERTY_ADDED = '+';
-const PROPERTY_NOT_CHANGED = ' ';
+const INDENT = '    ';
 
-function formatValue(mixed $value): string
+function renderPretty(array $tree)
 {
-    return match ($value) {
-        true => 'true',
-        false => 'false',
-        null => 'null',
-        default => $value,
-    };
+    return buildPretty($tree);
 }
 
-function getIndent(int $depth, int $offset): string
+function buildPretty($tree, $level = 0)
 {
-    $count = INDENT_COUNT * $depth - $offset;
+    $offset = str_repeat(INDENT, $level);
 
-    return str_repeat(INDENT_SYMBOL, $count);
+    $nodesForPretty = array_map(function ($node) use ($offset, $level) {
+        switch ($node['type']) {
+            case 'nested':
+                $newChildren = buildPretty($node['children'], $level + 1);
+                return INDENT . "{$node['key']}: {$newChildren}";
+            case 'unchanged':
+                $valueStr = stringify($node['dataAfter']); 
+                return "{$offset}" . INDENT . "{$node['key']}: {$valueStr}";
+            case 'changed':
+                $beforeValueStr = stringify($node['dataBefore']);
+                $afterValueStr = stringify($node['dataAfter']);
+                return "{$offset}  + {$node['key']}: {$afterValueStr}\n{$offset}  - {$node['key']}: {$beforeValueStr}";
+            case 'removed':
+                $valueStr = stringify($node['dataBefore']);
+                return "{$offset}  - {$node['key']}: {$valueStr}";
+            case 'added':
+                $valueStr = stringify($node['dataAfter']);
+                return "{$offset}  + {$node['key']}: {$valueStr}";
+            default:
+                throw new \Exception("Unknown node {$node}");
+        }
+    }, $tree);
+
+    $result = implode("\n", array_filter($nodesForPretty));
+
+    if ($level == 0) {
+        return "{\n{$result}\n}";
+    }
+
+    return $result;
 }
 
-function formatResult(array $diff, int $depth = 1): string
+function stringify($value, $parentOffset = '', $level = 0)
 {
-    $lines = array_map(function ($item) use ($depth) {
-        $indent = getIndent($depth, INDENT_COUNT / 2);
-        $mark = match ($item['mark'] ?? null) {
-            -1 => PROPERTY_DELETED,
-            1 => PROPERTY_ADDED,
-            default => PROPERTY_NOT_CHANGED,
-        };
+    if (is_bool($value)) {
+        return $value ? 'true' : 'false';
+    }
 
-        if (key_exists('value', $item) && key_exists('key', $item)) {
-            $value = $item['value'];
-            $key = $item['key'];
-        } else {
-            $value = $item;
-            $key = '';
-        }
-        if (is_array($value)) {
-            if (!array_is_list($value)) {
-                $arrayValue = array_map(fn ($item) => ['value' => $value[$item], 'key' => $item], array_keys($value));
-            } else {
-                $arrayValue = $value;
-            }
-            $valuePrepared = formatResult($arrayValue, $depth + 1);
-        } else {
-            $valuePrepared = formatValue($value);
-        }
-        return "{$indent}{$mark} {$key}: {$valuePrepared}";
-    }, $diff);
-    $indentBrace = getIndent($depth - 1, 0);
-    $result = implode("\n", $lines);
-    return "{\n{$result}\n{$indentBrace}}";
+    if (!is_array($value)) {
+        return $value;
+    }
+
+    $offset = str_repeat(INDENT, $level + 1);
+    
+    $keys = array_keys($value);
+
+    $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        $keyStr = $parentOffset ? $parentOffset . "  " : '';
+        return "$keyStr$offset{$key}: {$value[$key]}";
+    }, $keys);
+
+    $result = implode("\n", $nestedItems);
+    
+    if ($level == 0 && !empty($parentOffset)) {
+        return "{\n{$result}\n{$parentOffset}}";
+    } else {
+        return "{\n{$result}\n{$offset}}";
+    }
 }
