@@ -36,13 +36,7 @@ function buildPretty($tree, $level = 0)
         }
     }, $tree);
 
-    $result = implode("\n", array_filter($nodesForPretty));
-
-    if ($level == 0) {
-        return "{\n{$result}\n}";
-    }
-
-    return $result;
+    return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
 }
 
 function stringify($value, $parentOffset = '', $level = 0)
