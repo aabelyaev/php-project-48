@@ -45,35 +45,24 @@ function buildPretty($tree, $level = 0)
     return $result;
 }
 
-function stringify($value, $parentOffset = '', $level = 0)
+function stringify($value, $parentOffset, $level = 0)
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
     }
 
-    // Ensure that the value is a string representation of itself if it's not an array or boolean
     if (!is_array($value)) {
-        return (string)$value;
+        return $value;
     }
 
+    $parentOffset = $level ? $parentOffset : INDENT;
     $offset = str_repeat(INDENT, $level + 1);
-    
+
     $keys = array_keys($value);
-    
-    $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        // Add a prefix to the key if there's a parent offset
-        $keyStr = $parentOffset ? "{$parentOffset}  " : '';
-        // Stringify each value in the array with the appropriate indentation
-        $item = "{$keyStr}{$offset}{$key}: ".stringify($value[$key], '', $level + 1);
-        return $item;
+
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        return $parentOffset . $offset . "$key: " . $value[$key];
     }, $keys);
 
-    $result = implode("\n", $nestedItems);
-    
-    // If it's the root level and there's a parent offset, format accordingly
-    if ($level == 0 && !empty($parentOffset)) {
-        return "{\n{$result}\n{$parentOffset}}";
-    } else {
-        return "{\n{$result}\n{$offset}}"; // Ensure the correct indentation for nested levels
-    }
+    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
 }
