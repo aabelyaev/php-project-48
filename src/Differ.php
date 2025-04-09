@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\Differ;
+namespace Differ\Differ;
 
 use function Gendiff\Builder\builderTree;
 use function Gendiff\Formatters\Formatters\renderDiff;
