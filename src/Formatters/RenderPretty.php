@@ -31,7 +31,8 @@ function buildPretty($tree, $level = 0)
             case 'added':
                 $valueStr = stringify($node['dataAfter']);
                 return "{$offset}  + {$node['key']}: {$valueStr}";
-        
+            default:
+                throw new \Exception("Unknown level {$level}");
         }
     }, $tree);
 
