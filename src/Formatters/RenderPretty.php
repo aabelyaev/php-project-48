@@ -9,7 +9,7 @@ function renderPretty(array $tree)
     return buildPretty($tree);
 }
 
-function buildPretty($tree, $level = 0)
+function buildPretty($tree, $level = 0):mixed
 {
     $offset = str_repeat(INDENT, $level);
 
