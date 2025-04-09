@@ -37,7 +37,7 @@ function buildPretty($tree, $level = 0)
                 return $offset
                     . "  + {$node['key']}: {$valueStr}";
             default:
-                return "Unknown node type: {$node['type']}";
+                throw new \Exception("Unknown node {$node}");
         }
     }, $tree);
 
