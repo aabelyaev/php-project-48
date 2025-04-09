@@ -2,7 +2,7 @@
 
 namespace Gendiff\Formatters\RenderPretty;
 
-const INDENT = '    '; // Определение константы для отступов
+const INDENT = '    ';
 
 function renderPretty(array $tree)
 {
@@ -11,49 +11,55 @@ function renderPretty(array $tree)
 
 function buildPretty($tree, $level = 0)
 {
-    $offset = str_repeat(INDENT, $level); // Вычисление текущего отступа
+    $offset = str_repeat(INDENT, $level);
 
     $nodesForPretty = array_map(function ($node) use ($offset, $level) {
         switch ($node['type']) {
             case 'nested':
-                $newChildren = buildPretty($node['children'], $level + 1); // Рекурсивный вызов для вложенных узлов
-                return "{$offset}  {$node['key']}: {$newChildren}"; // Формирование строки с отступом
+                $newChildren = buildPretty($node['children'], $level + 1);
+                return INDENT . "{$node['key']}: " . $newChildren;
             case 'unchanged':
-                $valueStr = stringify($node['dataAfter'], INDENT, $level + 1); // Вызов функции для форматирования значения
-                return "{$offset}    {$node['key']}: {$valueStr}"; // Формирование строки с отступом
+                return $offset . INDENT . "{$node['key']}: " . stringify($node['dataAfter'], $offset, $level);
             case 'changed':
-                $beforeValueStr = stringify($node['dataBefore'], INDENT, $level + 1); // Вызов функции для форматирования старого значения
-                $afterValueStr = stringify($node['dataAfter'], INDENT, $level + 1); // Вызов функции для форматирования нового значения
-                return "{$offset}  - {$node['key']}: {$beforeValueStr}\n" . "{$offset}  + {$node['key']}: {$afterValueStr}"; // Формирование строки с изменениями
+                return $offset
+                    . "  + {$node['key']}: "
+                    . stringify($node['dataAfter'], $offset, $level)
+                    . PHP_EOL
+                    . $offset
+                    . "  - {$node['key']}: "
+                    . stringify($node['dataBefore'], $offset, $level);
             case 'removed':
-                $valueStr = stringify($node['dataBefore'], INDENT, $level + 1); // Вызов функции для форматирования значения
-                return "{$offset}  - {$node['key']}: {$valueStr}"; // Формирование строки с удалением
+                return $offset
+                    . "  - {$node['key']}: "
+                    . stringify($node['dataBefore'], $offset, $level);
             case 'added':
-                $valueStr = stringify($node['dataAfter'], INDENT, $level + 1); // Вызов функции для форматирования значения
-                return "{$offset}  + {$node['key']}: {$valueStr}"; // Формирование строки с добавлением
-            default:
-                throw new \Exception("Unknown node {$node}");
+                return $offset
+                    . "  + {$node['key']}: "
+                    . stringify($node['dataAfter'], $offset, $level);
         }
     }, $tree);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}"; // Формирование окончательной строки с отступом
+    return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
 }
 
-function stringify($value, $parentOffset = '', $level = 0)
+function stringify($value, $parentOffset, $level = 0)
 {
     if (is_bool($value)) {
-        return $value ? 'true' : 'false'; // Преобразование булевых значений в строки
+        return $value ? 'true' : 'false';
     }
 
     if (!is_array($value)) {
-        return $value; // Возвращение простого значения без изменений
+        return $value;
     }
 
-    $offset = str_repeat(INDENT, $level + 1); // Вычисление отступа для вложенных элементов
+    $parentOffset = $level ? $parentOffset : INDENT;
+    $offset = str_repeat(INDENT, $level + 1);
 
-    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value, $level) {
-        return "{$parentOffset}{$offset}{$key}: " . stringify($value[$key], INDENT, $level + 1); // Рекурсивный вызов для вложенных массивов с указанием $level
-    }, array_keys($value));
+    $keys = array_keys($value);
 
-    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $parentOffset . "}"; // Формирование строки с отступом для вложенного элемента
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        return $parentOffset . $offset . "$key: " . $value[$key];
+    }, $keys);
+
+    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
 }
