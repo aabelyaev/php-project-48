@@ -39,7 +39,7 @@ function buildPretty($tree, $level = 0)
     return "{" . PHP_EOL . implode(PHP_EOL, array_filter($nodesForPretty)) . PHP_EOL . $offset . "}";
 }
 
-function stringify($value, $parentOffset = '', $level = 0)
+function stringify($value, $parentOffset, $level = 0)
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
@@ -49,20 +49,14 @@ function stringify($value, $parentOffset = '', $level = 0)
         return $value;
     }
 
+    $parentOffset = $level ? $parentOffset : INDENT;
     $offset = str_repeat(INDENT, $level + 1);
-    
+
     $keys = array_keys($value);
 
-    $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
-        $keyStr = $parentOffset ? $parentOffset . "  " : '';
-        return "$keyStr$offset{$key}: {$value[$key]}";
+    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        return $parentOffset . $offset . "$key: " . $value[$key];
     }, $keys);
 
-    $result = implode("\n", $nestedItems);
-    
-    if ($level == 0 && !empty($parentOffset)) {
-        return "{\n{$result}\n{$parentOffset}}";
-    } else {
-        return "{\n{$result}\n{$offset}}";
-    }
+    return "{" . PHP_EOL . implode(PHP_EOL, $nestedItem) . PHP_EOL . $offset . "}";
 }
