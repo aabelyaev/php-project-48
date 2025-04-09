@@ -17,37 +17,32 @@ function buildPretty($tree, $level = 0)
         switch ($node['type']) {
             case 'nested':
                 $newChildren = buildPretty($node['children'], $level + 1);
-                return implode('', [INDENT, $node['key'], ': ', $newChildren]);
+                return INDENT . "{$node['key']}: {$newChildren}";
             case 'unchanged':
                 $valueStr = stringify($node['dataAfter']); 
-               return implode('', [$offset, INDENT, $node['key'], ': ', $valueStr]);
+                return "{$offset}" . INDENT . "{$node['key']}: {$valueStr}";
             case 'changed':
                 $beforeValueStr = stringify($node['dataBefore']);
                 $afterValueStr = stringify($node['dataAfter']);
-                return $offset
-                    . "  + {$node['key']}: {$afterValueStr}" . "\n"
-                    . $offset
-                    . "  - {$node['key']}: {$beforeValueStr}";
+                return "{$offset}  + {$node['key']}: {$afterValueStr}\n{$offset}  - {$node['key']}: {$beforeValueStr}";
             case 'removed':
                 $valueStr = stringify($node['dataBefore']);
-                return $offset
-                    . "  - {$node['key']}: {$valueStr}";
+                return "{$offset}  - {$node['key']}: {$valueStr}";
             case 'added':
                 $valueStr = stringify($node['dataAfter']);
-                return $offset
-                    . "  + {$node['key']}: {$valueStr}";
+                return "{$offset}  + {$node['key']}: {$valueStr}";
             default:
                 throw new \Exception("Unknown node {$node}");
         }
     }, $tree);
 
     $result = implode("\n", array_filter($nodesForPretty));
-    
+
     if ($level == 0) {
-        return "{" . "\n" . $result . "\n" . "}";
-    } else {
-        return $offset . "{\n" . $result . "\n}";
+        return "{\n{$result}\n}";
     }
+
+    return $result;
 }
 
 function stringify($value, $parentOffset = '', $level = 0)
@@ -72,8 +67,8 @@ function stringify($value, $parentOffset = '', $level = 0)
     $result = implode("\n", $nestedItems);
     
     if ($level == 0 && !empty($parentOffset)) {
-        return "{" . "\n" . $result . "\n" . $parentOffset . "}";
+        return "{\n{$result}\n{$parentOffset}}";
     } else {
-        return "{" . "\n" . $result . "\n" . $offset;
+        return "{\n{$result}\n{$offset}}";
     }
 }
