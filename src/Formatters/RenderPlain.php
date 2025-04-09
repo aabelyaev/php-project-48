@@ -13,23 +13,22 @@ function buildPlain($tree, $parent = '')
         switch ($node['type']) {
             case 'nested':
                 return buildPlain($node['children'], "{$parent}{$node['key']}.");
-            default:
-                $str = "Property '%s'";
-                $action = '';
-                switch ($node['type']) {
-                    case 'changed':
-                        $action = " was changed. From '%s' to '%s'";
-                        break;
-                    case 'removed':
-                        $action = " was removed";
-                        break;
-                    case 'added':
-                        $str .= " was added with value: '%s'";
-                        break;
-                }
-                return sprintf($str . $action, "{$parent}{$node['key']}", stringify($node['dataBefore']), stringify($node['dataAfter']));
+            case 'changed':
+                return sprintf(
+                    "Property '{$parent}{$node['key']}' was changed. From '%s' to '%s'",
+                    stringify($node['dataBefore']),
+                    stringify($node['dataAfter'])
+                );
+            case 'removed':
+                return sprintf("Property '{$parent}{$node['key']}' was removed");
+            case 'added':
+                return sprintf(
+                    "Property '{$parent}{$node['key']}' was added with value: '%s'",
+                    stringify($node['dataAfter'])
+                );
         }
     }, $tree);
+
     return implode(PHP_EOL, array_filter($nodesForPlain, fn($item) => !empty($item)));
 }
 
