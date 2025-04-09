@@ -64,12 +64,12 @@ function stringify($value, $parentOffset = '', $level = 0)
     
     $keys = array_keys($value);
 
-    $nestedItem = array_map(function ($key) use ($parentOffset, $offset, $value) {
+    $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
         $keyStr = $parentOffset ? $parentOffset . "  " : '';
         return "$keyStr$offset{$key}: {$value[$key]}";
     }, $keys);
 
-    $result = implode("\n", $nestedItem);
+    $result = implode("\n", $nestedItems);
     
     if ($level == 0 && !empty($parentOffset)) {
         return "{" . "\n" . $result . "\n" . $parentOffset . "}";
