@@ -51,8 +51,9 @@ function stringify($value, $parentOffset = '', $level = 0)
         return $value ? 'true' : 'false';
     }
 
+    // Ensure that the value is a string representation of itself if it's not an array or boolean
     if (!is_array($value)) {
-        return (string)$value; // Ensures that the returned value is a string even if it's not an array
+        return (string)$value;
     }
 
     $offset = str_repeat(INDENT, $level + 1);
@@ -60,15 +61,19 @@ function stringify($value, $parentOffset = '', $level = 0)
     $keys = array_keys($value);
     
     $nestedItems = array_map(function ($key) use ($parentOffset, $offset, $value) {
+        // Add a prefix to the key if there's a parent offset
         $keyStr = $parentOffset ? "{$parentOffset}  " : '';
-        return "{$keyStr}{$offset}{$key}: {$value[$key]}";
+        // Stringify each value in the array with the appropriate indentation
+        $item = "{$keyStr}{$offset}{$key}: ".stringify($value[$key], '', $level + 1);
+        return $item;
     }, $keys);
 
     $result = implode("\n", $nestedItems);
     
+    // If it's the root level and there's a parent offset, format accordingly
     if ($level == 0 && !empty($parentOffset)) {
         return "{\n{$result}\n{$parentOffset}}";
     } else {
-        return "{\n{$result}\n{$offset}}"; // Modified to return the offset correctly
+        return "{\n{$result}\n{$offset}}"; // Ensure the correct indentation for nested levels
     }
 }
