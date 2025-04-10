@@ -12,58 +12,47 @@ function perform(array $diff): string
     return implode("\n", $filteredResult);
 }
 
-function formatPlain(array $diff, string $prefix = ''): array|null
+function formatPlain(array $diff, string $prefix = '')
 {
-    // Проверяем наличие и тип переменной $diff['children']
-    if (!isset($diff['children']) || !is_array($diff['children'])) {
-        return null; // Возвращаем null, если 'children' не существует или не является массивом
-    }
-
-    $result = [];
-    foreach ($diff['children'] as $child) {
-        $formattedChild = formatPlain($child, $prefix);
-        if (!is_null($formattedChild)) {
-            $result = array_merge($result, $formattedChild);
-        }
-    }
-
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
 
     switch ($status) {
         case 'root':
-            return $result;
+            return array_map(
+                function ($node) {
+                    return formatPlain($node);
+                },
+                $diff['children']
+            );
 
         case 'have children':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
-            foreach ($diff['children'] as $child) {
-                $formattedChild = formatPlain($child, $fullPath);
-                if (!is_null($formattedChild)) {
-                    $result[] = $formattedChild;
-                }
-            }
-            return $result;
+            return array_map(
+                function ($child) use ($fullPath) {
+                    return formatPlain($child, $fullPath);
+                },
+                $diff['children']
+            );
+
 
         case 'added':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             $value = stringify($diff['value']);
-            $result[] = "Property '{$fullPath}' was added with value: {$value}";
-            return $result;
+            return "Property '{$fullPath}' was added with value: {$value}";
 
         case 'unchanged':
-            return null;
+            return;
 
         case 'removed':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
-            $result[] = "Property '{$fullPath}' was removed";
-            return $result;
+            return "Property '{$fullPath}' was removed";
 
         case 'updated':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             $value1 = stringify($diff['value1']);
             $value2 = stringify($diff['value2']);
-            $result[] = "Property '{$fullPath}' was updated. From {$value1} to {$value2}";
-            return $result;
+            return "Property '{$fullPath}' was updated. From {$value1} to {$value2}";
 
         default:
             throw new \Exception("Unknown status '{$status}'");
