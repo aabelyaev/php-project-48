@@ -33,7 +33,7 @@ function getFileContent(string $path): string
         throw new \Exception("Failed to read file: {$path}");
     }
 
-    return (string)$content;
+    return $content;
 }
 
 
