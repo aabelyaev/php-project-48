@@ -1,6 +1,5 @@
 {
     "name": "hexlet/code",
-    "description": "Hexlet second project",
     "license": "MIT",
     "autoload": {
         "files": [
