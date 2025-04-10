@@ -12,7 +12,7 @@ function perform(array $diff): string
     return implode("\n", $filteredResult);
 }
 
-function formatPlain(array $diff, string $prefix = '')
+function formatPlain(array $diff, string $prefix = ''): string|null|array
 {
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
@@ -41,7 +41,7 @@ function formatPlain(array $diff, string $prefix = '')
             return "Property '{$fullPath}' was added with value: {$value}";
 
         case 'unchanged':
-            return $diff['status'];
+            return null;
 
         case 'removed':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
