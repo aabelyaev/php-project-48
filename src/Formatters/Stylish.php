@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ\Formatters\RenderPretty;
+namespace Differ\Formatters\Stylish;
 
 function makeIndent(int $depth): string
 {
@@ -10,7 +10,7 @@ function makeIndent(int $depth): string
     return str_repeat(' ', $indent);
 }
 
-function formatPretty(array $diff, int $depth = 1): string
+function formatStylish(array $diff, int $depth = 1): string
 {
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
@@ -20,7 +20,7 @@ function formatPretty(array $diff, int $depth = 1): string
         case 'root':
             $result = array_map(
                 function ($node) {
-                    return formatPretty($node);
+                    return formatStylish($node);
                 },
                 $diff['children']
             );
@@ -45,7 +45,7 @@ function formatPretty(array $diff, int $depth = 1): string
         case 'have children':
             $result = array_map(
                 function ($child) use ($depth) {
-                    return formatPretty($child, $depth + 1);
+                    return formatStylish($child, $depth + 1);
                 },
                 $diff['children']
             );
@@ -90,6 +90,6 @@ function stringify(mixed $data, int $depth = 1): string
 
 function perform(array $diff): string
 {
-    $result = formatPretty($diff);
+    $result = formatStylish($diff);
     return "{\n$result\n}";
 }

@@ -5,12 +5,12 @@ namespace Differ\Formatters;
 function format(array $diff, string $format): string
 {
     switch ($format) {
-        case 'pretty':
-            return RenderPretty\perform($diff);
         case 'plain':
-            return RenderPlain\perform($diff);
+            return Plain\perform($diff);
+        case 'stylish':
+            return Stylish\perform($diff);
         case 'json':
-            return RenderJson\perform($diff);
+            return Json\perform($diff);
         default:
             throw new \Exception("Unknown format '{$format}'.");
     }

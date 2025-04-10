@@ -6,7 +6,7 @@ use function Functional\sort;
 use function Differ\Parsers\parse;
 use function Differ\Formatters\format;
 
-function genDiff(string $filename1, string $filename2, string $format = 'pretty'): string
+function genDiff(string $filename1, string $filename2, string $format = 'stylish'): string
 {
     $firstData = getFileContent($filename1); 
     $secondData = getFileContent($filename2); 

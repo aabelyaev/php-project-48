@@ -25,17 +25,17 @@ class DifferTest extends TestCase
         $filename2 = 'before.json';
         $filename4 = 'after.yml';
         $filename5 = 'before.yaml';
-        $formatPretty = 'pretty';
+        $formatStylish = 'stylish';
         $formatPlain = 'plain';
         $formatJson = 'json';
-        $expectedPretty = 'prettyExpected.txt';
+        $expectedStylish = 'stylishExpected.txt';
         $expectedPlain = 'plainExpected.txt';
         $expectedJson = 'jsonExpected.txt';
 
         return [
-            'json to json. Format Pretty' => [$filename1, $filename2, $formatPretty, $expectedPretty],
-            'yml to yaml. Format Pretty' => [$filename4, $filename5, $formatPretty, $expectedPretty],
-            'json to yaml. Format Pretty' => [$filename1, $filename5, $formatPretty, $expectedPretty],
+            'json to json. Format Stylish' => [$filename1, $filename2, $formatStylish, $expectedStylish],
+            'yml to yaml. Format Stylish' => [$filename4, $filename5, $formatStylish, $expectedStylish],
+            'json to yaml. Format Stylish' => [$filename1, $filename5, $formatStylish, $expectedStylish],
             'json to json. Format Plain' => [$filename1, $filename2, $formatPlain, $expectedPlain],
             'yml to yaml. Format Plain' => [$filename4, $filename5, $formatPlain, $expectedPlain],
             'json to yaml. Format Plain' => [$filename1, $filename5, $formatPlain, $expectedPlain],
@@ -51,7 +51,7 @@ class DifferTest extends TestCase
 
         $filename2 = 'before.json';
         $filename1 = 'before7.yml'; 
-        $format = 'pretty';
+        $format = 'stylish';
 
         genDiff($this->getFixturePath($filename1), $this->getFixturePath($filename2), $format);
     }
@@ -62,7 +62,7 @@ class DifferTest extends TestCase
 
         $filename2 = 'before.json';
         $filename1 = 'testFile3.txt'; 
-        $format = 'pretty';
+        $format = 'stylish';
 
         genDiff($this->getFixturePath($filename1), $this->getFixturePath($filename2), $format);
     }
