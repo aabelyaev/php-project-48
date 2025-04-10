@@ -68,6 +68,14 @@ function differ(object $array1, object $array2): array
             ];
         }
 
+        if ($value1 === $value2) {
+            return [
+                'status' => 'unchanged',
+                'key' => $key,
+                'value' => $value1
+            ];
+        }
+
         if (is_object($value1) && is_object($value2)) {
             return [
                 'status' => 'have children',

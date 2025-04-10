@@ -40,6 +40,9 @@ function formatPlain(array $diff, string $prefix = '')
             $value = stringify($diff['value']);
             return "Property '{$fullPath}' was added with value: {$value}";
 
+        case 'unchanged':
+            return $diff['status'];
+
         case 'removed':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             return "Property '{$fullPath}' was removed";
