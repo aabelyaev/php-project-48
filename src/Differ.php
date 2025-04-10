@@ -8,10 +8,10 @@ use function Differ\Formatters\format;
 
 function genDiff(string $filename1, string $filename2, string $format = 'stylish'): string
 {
-    $firstData = getFileContent($filename1); 
-    $secondData = getFileContent($filename2); 
+    $firstData = getFileContent($filename1);
+    $secondData = getFileContent($filename2);
 
-    $firstParserResult = parse($firstData, pathinfo($filename1, PATHINFO_EXTENSION)); 
+    $firstParserResult = parse($firstData, pathinfo($filename1, PATHINFO_EXTENSION));
     $secondParserResult = parse($secondData, pathinfo($filename2, PATHINFO_EXTENSION));
 
     $diff = makeDiff($firstParserResult, $secondParserResult);

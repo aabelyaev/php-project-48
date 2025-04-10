@@ -50,7 +50,7 @@ class DifferTest extends TestCase
         $this->expectException(\Exception::class);
 
         $filename2 = 'before.json';
-        $filename1 = 'before7.yml'; 
+        $filename1 = 'before7.yml';
         $format = 'stylish';
 
         genDiff($this->getFixturePath($filename1), $this->getFixturePath($filename2), $format);
@@ -61,7 +61,7 @@ class DifferTest extends TestCase
         $this->expectException(\Exception::class);
 
         $filename2 = 'before.json';
-        $filename1 = 'testFile3.txt'; 
+        $filename1 = 'testFile3.txt';
         $format = 'stylish';
 
         genDiff($this->getFixturePath($filename1), $this->getFixturePath($filename2), $format);
