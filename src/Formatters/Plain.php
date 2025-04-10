@@ -14,6 +14,10 @@ function perform(array $diff): string
 
 function formatPlain(array $diff, string $prefix = ''): array|null
 {
+    if (!isset($diff['children']) || !is_array($diff['children'])) {
+        return null;
+    }
+
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
 
