@@ -57,6 +57,7 @@ function formatPlain(array $diff, string $prefix = '')
         default:
             throw new \Exception("Unknown status '{$status}'");
     }
+    return $diff;
 }
 
 
