@@ -6,7 +6,7 @@ use function Functional\flatten;
 
 function perform(array $diff): string
 {
-    $result = array_filter(flatten(formatPlain($diff)), '!==', false);
+    $result = array_filter(flatten(formatPlain($diff)));
     return implode("\n", $result);
 }
 
