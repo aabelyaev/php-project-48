@@ -27,7 +27,13 @@ function getFileContent(string $path): string
         throw new \Exception("Oops! No file {$path}!");
     }
 
-    return file_get_contents($path);
+    $content = @file_get_contents($path);
+
+    if ($content === false) {
+        throw new \Exception("Failed to read file: {$path}");
+    }
+
+    return (string)$content;
 }
 
 
