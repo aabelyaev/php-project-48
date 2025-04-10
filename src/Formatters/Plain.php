@@ -35,14 +35,13 @@ function formatPlain(array $diff, string $prefix = '')
                 $diff['children']
             );
 
-
         case 'added':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             $value = stringify($diff['value']);
             return "Property '{$fullPath}' was added with value: {$value}";
 
         case 'unchanged':
-            return;
+            return $diff;
 
         case 'removed':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
@@ -57,7 +56,6 @@ function formatPlain(array $diff, string $prefix = '')
         default:
             throw new \Exception("Unknown status '{$status}'");
     }
-    return $diff;
 }
 
 
