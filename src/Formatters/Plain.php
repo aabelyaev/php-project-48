@@ -12,7 +12,7 @@ function perform(array $diff): string
     return implode("\n", $filteredResult);
 }
 
-function formatPlain(array $diff, string $prefix = ''): string|null|array
+function formatPlain(array $diff, string $prefix = ''): array
 {
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
@@ -38,20 +38,20 @@ function formatPlain(array $diff, string $prefix = ''): string|null|array
         case 'added':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             $value = stringify($diff['value']);
-            return "Property '{$fullPath}' was added with value: {$value}";
+            return ["Property '{$fullPath}' was added with value: {$value}"];
 
         case 'unchanged':
-            return null;
+            return [];
 
         case 'removed':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
-            return "Property '{$fullPath}' was removed";
+            return ["Property '{$fullPath}' was removed"];
 
         case 'updated':
             $fullPath = ($prefix === '') ? $key : "{$prefix}.{$key}";
             $value1 = stringify($diff['value1']);
             $value2 = stringify($diff['value2']);
-            return "Property '{$fullPath}' was updated. From {$value1} to {$value2}";
+            return ["Property '{$fullPath}' was updated. From {$value1} to {$value2}"];
 
         default:
             throw new \Exception("Unknown status '{$status}'");
