@@ -6,8 +6,10 @@ use function Functional\flatten;
 
 function perform(array $diff): string
 {
-    $result = array_filter(flatten(formatPlain($diff, ' ')));
-    return implode("\n", $result);
+    $formattedDiff = formatPlain($diff, '');
+    $flattenedDiff = flatten($formattedDiff);
+    $filteredResult = array_filter($flattenedDiff, fn($item) => $item !== null && $item !== false && $item !== '');
+    return implode("\n", $filteredResult);
 }
 
 function formatPlain(array $diff, string $prefix = '')
