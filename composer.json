@@ -2,6 +2,10 @@
     "name": "hexlet/code",
     "license": "MIT",
     "autoload": {
+        "psr-4": {
+            "Gendiff\\": "src",
+            "Gendiff\\Tests\\": "tests"
+        },
         "files": [
             "src/Differ.php",
             "src/Formatters.php",
