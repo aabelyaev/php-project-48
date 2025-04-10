@@ -11,7 +11,7 @@ function makeIndent(int $depth): string
     return str_repeat(' ', $indent);
 }
 
-function renderPretty((array $diff, int $depth = 1): string
+function renderPretty(array $diff, int $depth = 1): string
 {
     $status = $diff['status'];
     $key = $diff['key'] ?? null;
@@ -21,7 +21,7 @@ function renderPretty((array $diff, int $depth = 1): string
         case 'root':
             $result = array_map(
                 function ($node) {
-                    return renderPretty(($node);
+                    return renderPretty($node);
                 },
                 $diff['children']
             );
@@ -46,7 +46,7 @@ function renderPretty((array $diff, int $depth = 1): string
         case 'have children':
             $result = array_map(
                 function ($child) use ($depth) {
-                    return renderPretty(($child, $depth + 1);
+                    return renderPretty($child, $depth + 1);
                 },
                 $diff['children']
             );
