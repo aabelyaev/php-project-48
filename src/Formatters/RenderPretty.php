@@ -17,7 +17,7 @@ function renderPretty(array $tree, int $level = 1): string
     $key = $tree['key'] ?? null;
     $indent = makeIndent($level);
 
-    switch ($status) {
+    switch ($tree['type']) {
         case 'root':
             $result = array_map(
                 function ($node) {
