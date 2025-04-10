@@ -60,7 +60,7 @@ function renderPretty(array $diff, int $depth = 1): string
 
 function perform(array $diff): string
 {
-    $result = renderPretty(($diff);
+    $result = renderPretty($diff);
     return "{\n$result\n}";
 }
 
