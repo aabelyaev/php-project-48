@@ -2,7 +2,6 @@
 
 namespace Gendiff\Formatters\RenderPretty;
 
-
 function makeIndent(int $depth): string
 {
     $step = 4;
@@ -11,11 +10,12 @@ function makeIndent(int $depth): string
     return str_repeat(' ', $indent);
 }
 
-function renderPretty(array $diff, int $depth = 1): string
+
+function renderPretty(array $tree, int $level = 1): string
 {
-    $status = $diff['status'];
-    $key = $diff['key'] ?? null;
-    $indent = makeIndent($depth);
+    $status = $tree['status'];
+    $key = $tree['key'] ?? null;
+    $indent = makeIndent($level);
 
     switch ($status) {
         case 'root':
@@ -23,32 +23,32 @@ function renderPretty(array $diff, int $depth = 1): string
                 function ($node) {
                     return renderPretty($node);
                 },
-                $diff['children']
+                $tree['children']
             );
             return implode("\n", $result);
 
         case 'added':
-            $value = stringify($diff['value'], $depth);
+            $value = stringify($tree['value'], $level);
             return "$indent+ $key: $value";
         case 'removed':
-            $value = stringify($diff['value'], $depth);
+            $value = stringify($tree['value'], $level);
             return "$indent- $key: $value";
 
         case 'unchanged':
-            $value = stringify($diff['value'], $depth);
+            $value = stringify($tree['value'], $level);
             return "$indent  $key: $value";
 
         case 'updated':
-            $value1 = stringify($diff['value1'], $depth);
-            $value2 = stringify($diff['value2'], $depth);
+            $value1 = stringify($tree['value1'], $level);
+            $value2 = stringify($tree['value2'], $level);
             return "$indent- $key: $value1\n$indent+ $key: $value2";
 
         case 'have children':
             $result = array_map(
-                function ($child) use ($depth) {
-                    return renderPretty($child, $depth + 1);
+                function ($child) use ($level) {
+                    return renderPretty($child, $level + 1);
                 },
-                $diff['children']
+                $tree['children']
             );
             $prefinal = implode("\n", $result);
             return "$indent  $key: {\n$prefinal\n$indent  }";
@@ -58,13 +58,7 @@ function renderPretty(array $diff, int $depth = 1): string
     }
 }
 
-function perform(array $diff): string
-{
-    $result = renderPretty($diff);
-    return "{\n$result\n}";
-}
-
-function stringify(mixed $data, int $depth = 1): string
+function stringify(mixed $data, int $level = 1): string
 {
     if (is_string($data)) {
         return $data;
@@ -78,16 +72,16 @@ function stringify(mixed $data, int $depth = 1): string
         $keys = array_keys(get_object_vars($data));
 
         $preview = array_map(
-            function ($key) use ($data, $depth) {
-                $indent = makeIndent($depth + 1);
-                $value = stringify($data->$key, $depth + 1);
+            function ($key) use ($data, $level) {
+                $indent = makeIndent($level + 1);
+                $value = stringify($data->$key, $level + 1);
                 return "$indent  $key: $value";
             },
             $keys
         );
 
         $result = implode("\n", $preview);
-        $closingIndent = makeIndent($depth);
+        $closingIndent = makeIndent($level);
         return "{\n$result\n$closingIndent  }";
     }
 

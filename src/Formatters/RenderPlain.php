@@ -2,6 +2,15 @@
 
 namespace Gendiff\Formatters\RenderPlain;
 
+function renderPlain(array $tree)
+{
+    return buildPlain($tree);
+}
+
+<?php
+
+namespace Gendiff\Formatters\RenderPlain;
+
 /**
  * Renders the differences in a plain text format.
  *
