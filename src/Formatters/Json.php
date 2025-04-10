@@ -4,5 +4,11 @@ namespace Differ\Formatters\Json;
 
 function perform(array $diff): string
 {
-    return json_encode($diff, JSON_PRETTY_PRINT);
+    $json = @json_encode($diff, JSON_PRETTY_PRINT);
+    
+    if ($json === false) {
+        throw new \Exception("Failed to encode data as JSON");
+    }
+        
+    return $json;
 }
