@@ -8,9 +8,9 @@
         "files": [
             "src/Differ.php",
             "src/Formatters.php",
-            "src/Formatters/RenderPretty.php",
-            "src/Formatters/RenderPlain.php",
-            "src/Formatters/RenderJson.php",
+            "src/Formatters/Stylish.php",
+            "src/Formatters/Plain.php",
+            "src/Formatters/Json.php",
             "src/Parsers.php"
 
         ]
