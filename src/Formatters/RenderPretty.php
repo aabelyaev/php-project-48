@@ -48,7 +48,7 @@ function buildPretty(array $tree, int $level = 1): array
                 $secondStr = "{$indent}{$signAdded}{$node['key']}: {$newValue}";
                 return $firstStr . PHP_EOL . $secondStr;
 
-            case 'has children':
+            case 'nested':
                 $sign = $signNoSign;
                 $children = $node['children'];
                 $firstStr = "{$indent}{$sign}{$node['key']}: {";

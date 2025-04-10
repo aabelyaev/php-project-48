@@ -26,6 +26,10 @@ function builderTree($dataBefore, $dataAfter)
             return buildNode($key, 'changed', $dataBefore[$key], $dataAfter[$key]);
         }
 
+        if ($dataBefore[$key] !== $dataAfter[$key]) {
+            return buildNode($key, 'update', $dataBefore[$key], $dataAfter[$key]);
+        }
+
         return buildNode($key, 'unchanged', $dataBefore[$key], $dataAfter[$key]);
      }, $uniqueKeys);
 }
