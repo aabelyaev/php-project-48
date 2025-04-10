@@ -16,51 +16,51 @@ function makeIndent(int $depth): string
 }
 
 
-function buildPretty(array $tree, int $level = 1): string
+function buildPretty(array $tree, int $level = 1): array
 {
-    $status = $tree['status'];
-    $key = $tree['key'] ?? null;
-    $indent = makeIndent($level);
+    return array_map(function ($node) use ($level) {
 
-    switch ($status) {
-        case 'root':
-            $result = array_map(
-                function ($node) {
-                    return renderPretty($node);
-                },
-                $tree['children']
-            );
-            return implode("\n", $result);
+        $signRemoved = '  - ';
+        $signAdded = '  + ';
+        $signNoSign = '    ';
+        $indent = str_repeat('    ', $level  - 1);
 
-        case 'added':
-            $value = stringify($tree['value'], $level);
-            return "$indent+ $key: $value";
-        case 'removed':
-            $value = stringify($tree['value'], $level);
-            return "$indent- $key: $value";
+        switch ($node['status']) {
+            case 'unchanged':
+                $sign = $signNoSign;
+                $value = stringify($node['value'], $level);
+                return "{$indent}{$sign}{$node['key']}: {$value}";
 
-        case 'unchanged':
-            $value = stringify($tree['value'], $level);
-            return "$indent  $key: $value";
+            case 'added':
+                $sign = $signAdded;
+                $value = stringify($node['value'], $level);
+                return "{$indent}{$sign}{$node['key']}: {$value}";
 
-        case 'updated':
-            $value1 = stringify($tree['value1'], $level);
-            $value2 = stringify($tree['value2'], $level);
-            return "$indent- $key: $value1\n$indent+ $key: $value2";
+            case 'removed':
+                $sign = $signRemoved;
+                $value = stringify($node['value'], $level);
+                return "{$indent}{$sign}{$node['key']}: {$value}";
 
-        case 'have children':
-            $result = array_map(
-                function ($child) use ($level) {
-                    return renderPretty($child, $level + 1);
-                },
-                $tree['children']
-            );
-            $prefinal = implode("\n", $result);
-            return "$indent  $key: {\n$prefinal\n$indent  }";
+            case 'updated':
+                $oldValue = stringify($node['oldValue'], $level);
+                $newValue = stringify($node['newValue'], $level);
+                $firstStr = "{$indent}{$signRemoved}{$node['key']}: {$oldValue}";
+                $secondStr = "{$indent}{$signAdded}{$node['key']}: {$newValue}";
+                return $firstStr . PHP_EOL . $secondStr;
 
-        default:
-            throw new \Exception('Unknown status');
-    }
+            case 'has children':
+                $sign = $signNoSign;
+                $children = $node['children'];
+                $firstStr = "{$indent}{$sign}{$node['key']}: {";
+                $preparedStrings = buildPretty($children, $level + 1);
+                $childrenStr = implode(PHP_EOL, $preparedStrings);
+                $lastStr = "{$indent}    }";
+                return $firstStr . PHP_EOL . $childrenStr . PHP_EOL . $lastStr;
+
+            default:
+                throw new \Exception("Unknown node status '{$node['status']}'");
+        }
+    }, $tree);
 }
 
 function stringify(mixed $data, int $level = 1): string
