@@ -2,6 +2,11 @@
 
 namespace Gendiff\Formatters\RenderPretty;
 
+function renderPretty(array $tree)
+{
+    return buildPretty($tree);
+}
+
 function makeIndent(int $depth): string
 {
     $step = 4;
@@ -11,13 +16,13 @@ function makeIndent(int $depth): string
 }
 
 
-function renderPretty(array $tree, int $level = 1): string
+function buildPretty(array $tree, int $level = 1): string
 {
     $status = $tree['status'];
     $key = $tree['key'] ?? null;
     $indent = makeIndent($level);
 
-    switch ($tree['type']) {
+    switch ($status) {
         case 'root':
             $result = array_map(
                 function ($node) {

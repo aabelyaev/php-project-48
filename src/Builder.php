@@ -2,6 +2,7 @@
 
 namespace Gendiff\Builder;
 
+
 function builderTree($dataBefore, $dataAfter)
 {
     $uniqueKeys = array_values(
