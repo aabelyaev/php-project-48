@@ -4,9 +4,9 @@ namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function parse(string $fileContent, string $fileExtension): object
+function parse(string $fileContent, string $fileFormat): object
 {
-    switch ($fileExtension) {
+    switch ($fileFormat) {
         case 'json':
             return json_decode($fileContent);
 
@@ -15,6 +15,6 @@ function parse(string $fileContent, string $fileExtension): object
             return Yaml::parse($fileContent, Yaml::PARSE_OBJECT_FOR_MAP);
 
         default:
-            throw new \Exception("Unknown.{$fileExtension} extension.");
+            throw new \Exception("Unknown.{$fileFormat} extension.");
     }
 }
