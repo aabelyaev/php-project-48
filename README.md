@@ -15,5 +15,3 @@
  [step5](https://asciinema.org/a/3aQB4k0032lFYFiobB4dk3Jb3)
 ## 6 step ##
  [step6](https://asciinema.org/a/77uxxbWlDzVcpiJOJr2Uk6Zf2)
-
-test
